@@ -52,7 +52,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   style: Theme.of(context).textTheme.subtitle2),
               const Spacer(),
               ElevatedButton(
-                child: const Text('logout'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppConstants.hexToColor(
                       AppConstants.appPrimaryColorGreen),
@@ -64,6 +63,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         .pushNamedAndRemoveUntil('/', (route) => false);
                   }
                 },
+                child: const Text('logout'),
               ),
               const Spacer(),
             ],

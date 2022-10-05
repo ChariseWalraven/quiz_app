@@ -10,19 +10,20 @@ class LoginTextField extends StatelessWidget {
   final FormFieldValidator<String>? validator;
   final bool obscureText;
 
-  const LoginTextField(
-      {Key? key,
-      required this.textEditingController,
-      required this.hintText,
-      this.validator,
-      this.obscureText = false})
-      : super(key: key);
+  const LoginTextField({
+    Key? key,
+    required this.textEditingController,
+    required this.hintText,
+    this.validator,
+    this.obscureText = false,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
         validator: ((value) {
           if (validator != null) return validator!(value);
+          return null;
         }),
         controller: textEditingController,
         decoration: InputDecoration(

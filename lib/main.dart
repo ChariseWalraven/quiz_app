@@ -1,6 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:quiz_app/home/home.dart';
 import 'package:quiz_app/routes.dart';
 import 'package:quiz_app/services/firestore.dart';
 import 'package:quiz_app/theme.dart';
@@ -16,7 +15,7 @@ void main() async {
       Provider<AuthService>(create: (_) => AuthService()),
       Provider<Report>(create: (context) => Report()),
     ],
-    child: QuizApp(),
+    child: const QuizApp(),
   ));
 }
 
@@ -33,14 +32,13 @@ class _QuizAppState extends State<QuizApp> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      // Initialize FlutterFire:
+      // Initialize firebase:
       future: _initialization,
       builder: (context, snapshot) {
         // Check for errors
         if (snapshot.hasError) {
-          // Error screen
+          // TODO: Error screen
         }
-
         // Once complete, show your application
         if (snapshot.connectionState == ConnectionState.done) {
           return StreamProvider(
@@ -48,9 +46,10 @@ class _QuizAppState extends State<QuizApp> {
             catchError: (_, err) => Report(),
             initialData: Report(),
             child: MaterialApp(
-                debugShowCheckedModeBanner: false,
-                routes: appRoutes,
-                theme: appTheme),
+              debugShowCheckedModeBanner: false,
+              routes: appRoutes,
+              theme: appTheme,
+            ),
           );
         }
 
