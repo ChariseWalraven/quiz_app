@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:quiz_app/shared/error.dart';
 
 import '../helpers/app_constants.dart';
 import '../services/auth.dart';
@@ -14,18 +15,26 @@ class LoginScreen extends StatelessWidget {
 
   final _formKey = GlobalKey<FormState>();
 
-  final userNameController = TextEditingController();
+  final userEmailController = TextEditingController();
   final passwordController = TextEditingController();
 
-  Future<void> loginUser(BuildContext context) async {
+  Future<String> loginUser(BuildContext context) async {
+    String errorMessage = "";
+
     if (_formKey.currentState != null && _formKey.currentState!.validate()) {
-      context.read<AuthService>().loginUser(userNameController.text);
-      Navigator.of(context)
-          .pushNamedAndRemoveUntil('/topics', (route) => false);
-      print('Login Successful');
-    } else {
-      print('Login Not Successful');
+      try {
+        debugPrint("Button pressed, logging in user");
+        await context.read<AuthService>().loginUser(
+              userEmailController.text,
+              passwordController.text,
+            );
+        debugPrint('Login successful');
+      } on Exception catch (e) {
+        debugPrint('Login Unsuccesful. $e');
+        errorMessage = "e";
+      }
     }
+    return errorMessage;
   }
 
   @override
@@ -37,43 +46,38 @@ class LoginScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Stack(children: [
-              Image.asset(
-                "assets/images/flutterdevcamp2022_banner.png",
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  '#flutterdevcamp \nLondon \n${DateFormat.MMMMd().format(DateTime.now())} ',
-                  style: TextStyle(
-                    color: AppConstants.hexToColor(
-                        AppConstants.appPrimaryColorGreen),
-                    fontSize: 24,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ]),
             Form(
               key: _formKey,
               child: Column(
                 children: [
                   LoginTextField(
-                    hintText: "Enter your UserName",
+                    hintText: "Enter your email",
                     validator: ((value) {
                       if (value != null &&
                           value.isNotEmpty &&
                           value.length < 5) {
-                        return "Your username should be more than 5 characters";
+                        return "Your email should be more than 5 characters";
                       } else if (value != null && value.isEmpty) {
-                        return "Please type your username";
+                        return "Please enter your email";
+                      } else if (value != null && !value.contains("@")) {
+                        return "This email is invalid";
                       }
                       return null;
                     }),
-                    textEditingController: userNameController,
+                    textEditingController: userEmailController,
                   ),
                   SizedBox(height: 24),
                   LoginTextField(
+                    validator: ((value) {
+                      if (value != null &&
+                          value.isNotEmpty &&
+                          value.length < 5) {
+                        return "Your email should be more than 5 characters";
+                      } else if (value != null && value.isEmpty) {
+                        return "Please enter your password";
+                      }
+                      return null;
+                    }),
                     textEditingController: passwordController,
                     obscureText: true,
                     hintText: 'Enter your password',
@@ -85,7 +89,13 @@ class LoginScreen extends StatelessWidget {
             LoginButton(
               icon: FontAwesomeIcons.envelope,
               loginMethod: () async {
-                await loginUser(context);
+                String errorMessage = await loginUser(context);
+                if (errorMessage.isEmpty) {
+                  // NOTE: How to fix?
+                  Navigator.of(context)
+                      .pushNamedAndRemoveUntil('/topics', (route) => false);
+                }
+                // TODO: handle error
               },
               text: "Login",
               color: AppConstants.hexToColor(AppConstants.appPrimaryColorGreen),
@@ -113,3 +123,23 @@ class LoginScreen extends StatelessWidget {
     );
   }
 }
+
+
+// remove for now to make space so can see buttons properly when keyboard is up
+            // Stack(children: [
+            //   Image.asset(
+            //     "assets/images/flutterdevcamp2022_banner.png",
+            //   ),
+            //   Padding(
+            //     padding: const EdgeInsets.all(8.0),
+            //     child: Text(
+            //       '#flutterdevcamp \nLondon \n${DateFormat.MMMMd().format(DateTime.now())} ',
+            //       style: TextStyle(
+            //         color: AppConstants.hexToColor(
+            //             AppConstants.appPrimaryColorGreen),
+            //         fontSize: 24,
+            //         fontWeight: FontWeight.w600,
+            //       ),
+            //     ),
+            //   ),
+            // ]),

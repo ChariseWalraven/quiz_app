@@ -1,11 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:quiz_app/shared/error.dart';
 
 class AuthService {
-  // final User user =
-  //     User(userName: "Sumith", photoURL: null, email: "sumithpd@gmail.com");
-  //I missed this during demo
-  //we need to listedn to any authstatechange so that we can redirect user to correct screen.void name(params) {
   final userStream = FirebaseAuth.instance.authStateChanges();
   final user = FirebaseAuth.instance.currentUser;
 
@@ -13,11 +13,13 @@ class AuthService {
   Future<void> anonymousLogin() async {
     try {
       await FirebaseAuth.instance.signInAnonymously();
-    } on FirebaseAuthException {
+    } on FirebaseAuthException catch (e) {
       // handle error
+      debugPrint("ERROR::AuthService:anonymousLogin -> ${e.code} ${e.message}");
     }
   }
 
+  /// Google sign in
   Future<void> googleLogin() async {
     try {
       final googleUser = await GoogleSignIn().signIn();
@@ -31,26 +33,84 @@ class AuthService {
       );
 
       await FirebaseAuth.instance.signInWithCredential(authCredential);
+      debugPrint("====== Success!");
     } on FirebaseAuthException catch (e) {
       // handle error
+      debugPrint("ERROR::AuthService:googleLogin -> ${e.code} ${e.message}");
+    } on PlatformException catch (e) {
+      debugPrint(
+          "ERROR::AuthService:googleLogin -> ${e.code} ${e.message} ${e.details}");
+    } catch (e) {
+      debugPrint("ERROR::AuthService:googleLogin -> $e");
     }
   }
 
+  /// Sign out
   Future<void> signOut() async {
     await FirebaseAuth.instance.signOut();
   }
 
-  void loginUser(String userName) {}
+  /// user login
+  Future<void> loginUser(String email, String password) async {
+    if (email.isEmpty) {
+      throw Exception("Email address cannot be empty");
+    }
+    if (password.isEmpty) {
+      throw Exception("Password cannot be empty");
+    }
+
+    bool isSuccess = false;
+    String errorMessage = "Oops, something went wrong";
+
+    bool userExists = await userWithEmailExists(email);
+
+    try {
+      if (userExists) {
+        debugPrint("Logging user in: $email");
+        await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: email,
+          password: password,
+        );
+      } else {
+        debugPrint("Creating User: $email");
+        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: email,
+          password: password,
+        );
+      }
+      debugPrint("Success! email: ${user?.email} dN: ${user?.displayName}");
+      isSuccess = true;
+    } on FirebaseAuthException catch (e) {
+      debugPrint("ERROR::AuthService:loginUser ${e.code} ${e.message}");
+      isSuccess = false;
+      errorMessage = e.message ?? errorMessage;
+    } catch (e) {
+      debugPrint("ERROR::AuthService:loginUser $e");
+      isSuccess = false;
+      errorMessage = e.toString();
+    }
+    if (!isSuccess) {
+      throw Exception(errorMessage);
+    }
+  }
 
   Future<bool> isLoggedIn() async {
-    return true;
+    throw UnimplementedError();
   }
-}
 
-class User {
-  final String userName;
-  String? photoURL;
-  final String? email;
-  User({required this.userName, required this.photoURL, required this.email});
-  get displayName => userName;
+  Future<bool> userWithEmailExists(String email) async {
+    bool userExists = false;
+    try {
+      List<String> userSignInMethods =
+          await FirebaseAuth.instance.fetchSignInMethodsForEmail(email);
+
+      debugPrint("Sign in methods for user: ${userSignInMethods.toString()}");
+      debugPrint("User exists: ${userSignInMethods.isNotEmpty}");
+      userExists = userSignInMethods.isNotEmpty;
+    } on Exception catch (e) {
+      debugPrint("Whoops. Something went wrong. $e");
+    }
+
+    return userExists;
+  }
 }
