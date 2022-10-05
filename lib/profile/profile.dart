@@ -71,6 +71,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
       );
     } else {
+      // Should I be disposing of state or something?
+      // This is so that we can avoid a forever loading
+      Future.delayed(
+        const Duration(milliseconds: 500),
+        () => Navigator.pushNamed(context, "/"),
+      );
       return const Loader();
     }
   }
