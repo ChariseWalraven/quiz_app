@@ -1,9 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_devcamp/home/home.dart';
-import 'package:flutter_devcamp/routes.dart';
-import 'package:flutter_devcamp/services/firestore.dart';
-import 'package:flutter_devcamp/theme.dart';
+import 'package:quiz_app/home/home.dart';
+import 'package:quiz_app/routes.dart';
+import 'package:quiz_app/services/firestore.dart';
+import 'package:quiz_app/theme.dart';
 import 'package:provider/provider.dart';
 import 'services/auth.dart';
 import 'models/models.dart';

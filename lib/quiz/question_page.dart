@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_devcamp/quiz/quiz_state.dart';
+import 'package:quiz_app/quiz/quiz_state.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
