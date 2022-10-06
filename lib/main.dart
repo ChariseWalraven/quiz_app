@@ -10,13 +10,15 @@ import 'shared/loading.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(MultiProvider(
-    providers: [
-      Provider<AuthService>(create: (_) => AuthService()),
-      Provider<Report>(create: (context) => Report()),
-    ],
-    child: const QuizApp(),
-  ));
+  runApp(
+    MultiProvider(
+      providers: [
+        Provider<AuthService>(create: (_) => AuthService()),
+        Provider<Report>(create: (context) => Report()),
+      ],
+      child: const QuizApp(),
+    ),
+  );
 }
 
 class QuizApp extends StatefulWidget {
