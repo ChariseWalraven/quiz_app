@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:quiz_app/models/models.dart';
@@ -35,12 +34,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
             children: [
               UserAvatar(user: user),
               Text(user.email ?? '',
-                  style: Theme.of(context).textTheme.headline6),
+                  style: Theme.of(context).textTheme.titleLarge),
               const Spacer(),
               Text('${report.total}',
-                  style: Theme.of(context).textTheme.headline2),
+                  style: Theme.of(context).textTheme.displayMedium),
               Text('Quizzes Completed',
-                  style: Theme.of(context).textTheme.subtitle2),
+                  style: Theme.of(context).textTheme.titleSmall),
               const Spacer(),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(

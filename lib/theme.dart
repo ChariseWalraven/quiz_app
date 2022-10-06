@@ -14,27 +14,29 @@ var appTheme = ThemeData(
   ),
   brightness: Brightness.light,
   primaryColor: AppConstants.hexToColor(AppConstants.appPrimaryColorGreen),
-  backgroundColor: AppConstants.hexToColor(AppConstants.appBackgroundColor),
   primaryColorLight: AppConstants.hexToColor(AppConstants.appPrimaryColorLight),
   dividerColor: AppConstants.hexToColor(AppConstants.appBackgroundColorGray),
   textTheme: TextTheme(
-    caption: TextStyle(
+    bodySmall: TextStyle(
         color: AppConstants.hexToColor(AppConstants.appPrimaryFontColorWhite)),
-    bodyText1: TextStyle(fontSize: 18),
-    bodyText2: TextStyle(fontSize: 16),
-    button: TextStyle(
+    bodyLarge: TextStyle(fontSize: 18),
+    bodyMedium: TextStyle(fontSize: 16),
+    labelLarge: TextStyle(
       letterSpacing: 1.5,
       fontWeight: FontWeight.bold,
     ),
-    headline1: TextStyle(
+    displayLarge: TextStyle(
       fontWeight: FontWeight.bold,
     ),
-    subtitle1: TextStyle(
+    labelMedium: TextStyle(
       color: Colors.grey,
     ),
   ),
   buttonTheme: const ButtonThemeData(),
   fontFamily: GoogleFonts.nunito().fontFamily,
+  colorScheme: ColorScheme.light(
+    background: AppConstants.hexToColor(AppConstants.appBackgroundColor),
+  ),
 );
 
 class ThemeTextStyle {

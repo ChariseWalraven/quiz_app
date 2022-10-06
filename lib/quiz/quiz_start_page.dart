@@ -17,7 +17,7 @@ class StartPage extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(quiz.title, style: Theme.of(context).textTheme.headline4),
+          Text(quiz.title, style: Theme.of(context).textTheme.headlineMedium),
           const Divider(),
           Expanded(child: Text(quiz.description)),
           ButtonBar(

@@ -1,9 +1,6 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:quiz_app/shared/error.dart';
 
 import '../helpers/app_constants.dart';
 import '../services/auth.dart';
@@ -66,7 +63,7 @@ class LoginScreen extends StatelessWidget {
                     }),
                     textEditingController: userEmailController,
                   ),
-                  SizedBox(height: 24),
+                  const SizedBox(height: 24),
                   LoginTextField(
                     validator: ((value) {
                       if (value != null &&
@@ -85,13 +82,14 @@ class LoginScreen extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
             LoginButton(
               icon: FontAwesomeIcons.envelope,
               loginMethod: () async {
                 String errorMessage = await loginUser(context);
                 if (errorMessage.isEmpty) {
                   // NOTE: How to fix?
+                  // ignore: use_build_context_synchronously
                   Navigator.of(context)
                       .pushNamedAndRemoveUntil('/topics', (route) => false);
                 }

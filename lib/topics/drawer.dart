@@ -69,12 +69,12 @@ class QuizList extends StatelessWidget {
                 child: ListTile(
                   title: Text(
                     quiz.title,
-                    style: Theme.of(context).textTheme.headline5,
+                    style: Theme.of(context).textTheme.headlineSmall,
                   ),
                   subtitle: Text(
                     quiz.description,
                     overflow: TextOverflow.fade,
-                    style: Theme.of(context).textTheme.subtitle2,
+                    style: Theme.of(context).textTheme.titleSmall,
                   ),
                   leading: QuizBadge(topic: topic, quizId: quiz.id),
                 ),
