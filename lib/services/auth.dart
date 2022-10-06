@@ -3,7 +3,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:quiz_app/shared/error.dart';
 
 class AuthService {
   final userStream = FirebaseAuth.instance.authStateChanges();
