@@ -36,7 +36,7 @@ class _QuizAppState extends State<QuizApp> {
       future: _initialization,
       builder: (context, snapshot) {
         if (snapshot.hasError) {
-          // TODO: Error screen
+          return ErrorWidget(snapshot.error!);
         }
         // Once complete, show your application
         if (snapshot.connectionState == ConnectionState.done) {
