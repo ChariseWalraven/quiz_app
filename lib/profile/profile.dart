@@ -1,8 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:quiz_app/models/models.dart';
+import 'package:quiz_app/widgets/user_avatar.dart';
 
 import '../helpers/app_constants.dart';
-import '../models/models.dart';
 import '../services/auth.dart';
 import '../shared/shared.dart';
 
@@ -31,18 +33,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Container(
-                width: 100,
-                height: 100,
-                margin: const EdgeInsets.only(top: 50),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  image: DecorationImage(
-                    image: NetworkImage(user.photoURL ??
-                        'https://www.gravatar.com/userimage/147551125/df757af1cf5b5b8844afbbedb56d990d.jpg'),
-                  ),
-                ),
-              ),
+              UserAvatar(user: user),
               Text(user.email ?? '',
                   style: Theme.of(context).textTheme.headline6),
               const Spacer(),
