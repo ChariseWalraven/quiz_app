@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -19,16 +17,16 @@ var appTheme = ThemeData(
   textTheme: TextTheme(
     bodySmall: TextStyle(
         color: AppConstants.hexToColor(AppConstants.appPrimaryFontColorWhite)),
-    bodyLarge: TextStyle(fontSize: 18),
-    bodyMedium: TextStyle(fontSize: 16),
-    labelLarge: TextStyle(
+    bodyLarge: const TextStyle(fontSize: 18),
+    bodyMedium: const TextStyle(fontSize: 16),
+    labelLarge: const TextStyle(
       letterSpacing: 1.5,
       fontWeight: FontWeight.bold,
     ),
-    displayLarge: TextStyle(
+    displayLarge: const TextStyle(
       fontWeight: FontWeight.bold,
     ),
-    labelMedium: TextStyle(
+    labelMedium: const TextStyle(
       color: Colors.grey,
     ),
   ),
@@ -41,7 +39,8 @@ var appTheme = ThemeData(
 
 class ThemeTextStyle {
   static TextStyle loginTextFieldStyle = GoogleFonts.lato(
-      textStyle: TextStyle(
-    color: Colors.blueGrey,
-  ));
+    textStyle: const TextStyle(
+      color: Colors.blueGrey,
+    ),
+  );
 }
