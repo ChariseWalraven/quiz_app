@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:quiz_app/models/models.dart';
-import 'package:quiz_app/widgets/user_avatar.dart';
+import 'package:quiz_app/widgets/error.dart';
+import 'package:quiz_app/profile/user_info.dart';
 
 import '../helpers/app_constants.dart';
 import '../services/auth.dart';
-import '../shared/shared.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -18,56 +18,47 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     var report = Provider.of<Report>(context);
-    var user = AuthService().user;
+    final AuthService authService = AuthService();
 
-    if (user != null) {
-      return Scaffold(
-        appBar: AppBar(
-          backgroundColor:
-              AppConstants.hexToColor(AppConstants.appPrimaryColorGreen),
-          title: Text(user.displayName ?? 'Guest'),
-        ),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            crossAxisAlignment: CrossAxisAlignment.center,
+    return StreamBuilder(
+      stream: AuthService().userStream,
+      builder: (context, snapshot) {
+        Widget child = Container();
+        if (snapshot.hasData) {
+          child = UserProfile(user: snapshot.data!, report: report);
+        } else if (snapshot.hasError) {
+          child = const ErrorGif(
             children: [
-              UserAvatar(user: user),
-              Text(user.email ?? '',
-                  style: Theme.of(context).textTheme.titleLarge),
-              const Spacer(),
-              Text('${report.total}',
-                  style: Theme.of(context).textTheme.displayMedium),
-              Text('Quizzes Completed',
-                  style: Theme.of(context).textTheme.titleSmall),
-              const Spacer(),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppConstants.hexToColor(
-                      AppConstants.appPrimaryColorGreen),
-                ),
+              Text("Maybe try logging in again?"),
+            ],
+          );
+        }
+        return Scaffold(
+          appBar: AppBar(
+            backgroundColor:
+                AppConstants.hexToColor(AppConstants.appPrimaryColorGreen),
+            title: const Text('Profile'),
+            actions: [
+              TextButton(
                 onPressed: () async {
-                  await AuthService().signOut();
+                  await authService.signOut();
                   if (mounted) {
                     Navigator.of(context)
                         .pushNamedAndRemoveUntil('/', (route) => false);
                   }
                 },
-                child: const Text('logout'),
+                child: const Icon(
+                  Icons.logout,
+                  color: Colors.white,
+                ),
               ),
-              const Spacer(),
             ],
           ),
-        ),
-      );
-    } else {
-      // Should I be disposing of state or something?
-      // This is so that we can avoid a forever loading
-      Future.delayed(
-        const Duration(milliseconds: 500),
-        () => Navigator.pushNamed(context, "/"),
-      );
-      return const Loader();
-    }
+          body: SafeArea(
+            child: Center(child: child),
+          ),
+        );
+      },
+    );
   }
 }

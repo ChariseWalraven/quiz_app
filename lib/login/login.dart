@@ -1,22 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:quiz_app/shared/error.dart';
 
 import '../helpers/app_constants.dart';
 import '../services/auth.dart';
 import 'login_button.dart';
 import 'login_text_field.dart';
 
-class LoginScreen extends StatelessWidget {
-  LoginScreen({super.key});
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
 
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
 
   final userEmailController = TextEditingController();
   final passwordController = TextEditingController();
+  String errorMessage = "";
 
-  Future<String> loginUser(BuildContext context) async {
-    String errorMessage = "";
+  Future<bool> loginUser(BuildContext context) async {
+    bool isSuccess = false;
 
     if (_formKey.currentState != null && _formKey.currentState!.validate()) {
       try {
@@ -26,12 +33,16 @@ class LoginScreen extends StatelessWidget {
               passwordController.text,
             );
         debugPrint('Login successful');
+        isSuccess = true;
       } on Exception catch (e) {
         debugPrint('Login Unsuccesful. $e');
-        errorMessage = "e";
+        setState(() {
+          errorMessage = e.toString();
+        });
       }
     }
-    return errorMessage;
+
+    return isSuccess;
   }
 
   @override
@@ -47,6 +58,10 @@ class LoginScreen extends StatelessWidget {
               key: _formKey,
               child: Column(
                 children: [
+                  if (errorMessage.isNotEmpty)
+                    ErrorMessage(
+                      message: errorMessage,
+                    ),
                   LoginTextField(
                     hintText: "Enter your email",
                     validator: ((value) {
@@ -86,34 +101,24 @@ class LoginScreen extends StatelessWidget {
             LoginButton(
               icon: FontAwesomeIcons.envelope,
               loginMethod: () async {
-                String errorMessage = await loginUser(context);
-                if (errorMessage.isEmpty) {
+                bool isSuccess = await loginUser(context);
+                if (isSuccess) {
                   // NOTE: How to fix?
                   // ignore: use_build_context_synchronously
                   Navigator.of(context)
                       .pushNamedAndRemoveUntil('/topics', (route) => false);
                 }
-                // TODO: handle error
               },
               text: "Login",
               color: AppConstants.hexToColor(AppConstants.appPrimaryColorGreen),
             ),
-            Flexible(
-              child: LoginButton(
-                icon: FontAwesomeIcons.userNinja,
-                text: 'Continue as Guest',
-                loginMethod: AuthService().anonymousLogin,
-                color:
-                    AppConstants.hexToColor(AppConstants.appPrimaryColorGreen),
-              ),
-            ),
+            // TODO: implement anonymous sign in?
             LoginButton(
               text: 'Sign in with Google',
               icon: FontAwesomeIcons.google,
               color:
                   AppConstants.hexToColor(AppConstants.appPrimaryColorAction),
               loginMethod: AuthService().googleLogin,
-              // AuthService().googleLogin,
             ),
           ],
         ),
@@ -121,23 +126,3 @@ class LoginScreen extends StatelessWidget {
     );
   }
 }
-
-
-// remove for now to make space so can see buttons properly when keyboard is up
-            // Stack(children: [
-            //   Image.asset(
-            //     "assets/images/flutterdevcamp2022_banner.png",
-            //   ),
-            //   Padding(
-            //     padding: const EdgeInsets.all(8.0),
-            //     child: Text(
-            //       '#flutterdevcamp \nLondon \n${DateFormat.MMMMd().format(DateTime.now())} ',
-            //       style: TextStyle(
-            //         color: AppConstants.hexToColor(
-            //             AppConstants.appPrimaryColorGreen),
-            //         fontSize: 24,
-            //         fontWeight: FontWeight.w600,
-            //       ),
-            //     ),
-            //   ),
-            // ]),

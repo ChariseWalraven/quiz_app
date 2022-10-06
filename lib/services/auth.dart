@@ -32,7 +32,6 @@ class AuthService {
       );
 
       await FirebaseAuth.instance.signInWithCredential(authCredential);
-      debugPrint("====== Success!");
     } on FirebaseAuthException catch (e) {
       // handle error
       debugPrint("ERROR::AuthService:googleLogin -> ${e.code} ${e.message}");
@@ -111,5 +110,21 @@ class AuthService {
     }
 
     return userExists;
+  }
+
+  Future<List<String>> getUserSignInMethods() async {
+    String email = user?.email ?? "";
+    if (email.isNotEmpty) {
+      var result =
+          await FirebaseAuth.instance.fetchSignInMethodsForEmail(email);
+      debugPrint(result.toString());
+      return result;
+    } else {
+      throw Exception("Sign in methods could not be retreived.");
+    }
+  }
+
+  void updateProfilePic(String photoURL) async {
+    await user?.updatePhotoURL(photoURL);
   }
 }
