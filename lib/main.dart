@@ -35,7 +35,6 @@ class _QuizAppState extends State<QuizApp> {
       // Initialize firebase:
       future: _initialization,
       builder: (context, snapshot) {
-        // Check for errors
         if (snapshot.hasError) {
           // TODO: Error screen
         }
