@@ -24,7 +24,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       stream: AuthService().userStream,
       builder: (context, snapshot) {
         Widget child = Container();
-        if (snapshot.hasData) {
+        if (snapshot.data != null) {
           child = UserProfile(user: snapshot.data!, report: report);
         } else if (snapshot.hasError) {
           child = const ErrorGif(
