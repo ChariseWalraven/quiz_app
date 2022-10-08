@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:quiz_app/models/user_roles.dart';
 part 'models.g.dart';
 
 @JsonSerializable()
