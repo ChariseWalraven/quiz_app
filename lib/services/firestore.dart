@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:quiz_app/models/user_roles.dart';
 import 'package:rxdart/rxdart.dart';
 import '../models/models.dart';
 import 'auth.dart';
@@ -48,5 +49,13 @@ class FirestoreService {
     };
 
     return ref.set(data, SetOptions(merge: true));
+  }
+
+  Future<UserRoles> getUserRoles() async {
+    var user = AuthService().user!;
+    DocumentReference ref = _db.collection("/userRoles").doc(user.uid);
+    DocumentSnapshot snapshot = await ref.get();
+
+    return UserRoles.fromJson(snapshot.data());
   }
 }
