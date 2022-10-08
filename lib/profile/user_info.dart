@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:quiz_app/models/models.dart' as models;
+import 'package:quiz_app/services/firestore.dart';
 
 class UserProfile extends StatelessWidget {
   const UserProfile({
@@ -14,6 +15,7 @@ class UserProfile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    FirestoreService().getUserRoles();
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       crossAxisAlignment: CrossAxisAlignment.center,
