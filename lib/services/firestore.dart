@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:quiz_app/models/user_roles.dart';
 import 'package:rxdart/rxdart.dart';
 import '../models/models.dart';
 import 'auth.dart';
@@ -57,5 +56,13 @@ class FirestoreService {
     DocumentSnapshot snapshot = await ref.get();
 
     return UserRoles.fromJson(snapshot.data());
+  }
+
+  Future<void> createTopic(Topic topic) async {
+    print("creating new topic ${topic.title}, with id ${topic.id}!");
+
+    await _db.collection("topics").doc(topic.id).set(topic.toJson());
+
+    print("Created document!");
   }
 }

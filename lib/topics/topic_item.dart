@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../helpers/app_constants.dart';
 import '../models/models.dart';
+import '../services/firestore.dart';
 import '../shared/progress_bar.dart';
 import 'drawer.dart';
 
@@ -11,6 +12,16 @@ class TopicItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Widget image = Image.asset(
+      'assets/covers/${topic.img}',
+      width: MediaQuery.of(context).size.width,
+    );
+    if (topic.img.startsWith("http")) {
+      image = Image.network(
+        topic.img,
+        width: MediaQuery.of(context).size.width,
+      );
+    }
     return Hero(
       tag: topic.img,
       child: Card(
@@ -31,10 +42,7 @@ class TopicItem extends StatelessWidget {
               Flexible(
                 flex: 3,
                 child: SizedBox(
-                  child: Image.asset(
-                    'assets/covers/${topic.img}',
-                    fit: BoxFit.contain,
-                  ),
+                  child: image,
                 ),
               ),
               Flexible(
@@ -60,29 +68,73 @@ class TopicItem extends StatelessWidget {
   }
 }
 
-class TopicScreen extends StatelessWidget {
+class TopicScreen extends StatefulWidget {
   final Topic topic;
 
   const TopicScreen({super.key, required this.topic});
 
   @override
+  State<TopicScreen> createState() => _TopicScreenState();
+}
+
+class _TopicScreenState extends State<TopicScreen> {
+  bool isAdmin = false;
+
+  @override
+  void initState() {
+    super.initState();
+    checkUserRoles();
+  }
+
+  void checkUserRoles() async {
+    var userRoles = await FirestoreService().getUserRoles();
+    setState(() {
+      isAdmin = userRoles.isAdmin;
+    });
+  }
+
+  void handleCreateQuiz(BuildContext context) {
+    debugPrint("create quiz presed");
+    if (isAdmin) {
+      Navigator.pushNamed(context, "/new_quiz");
+    } else {
+      debugPrint(
+          "Whoops. not an admin. Somehow the user can see and press the add quiz button");
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    Widget heroChild = Image.asset(
+      'assets/covers/${widget.topic.img}',
+      width: MediaQuery.of(context).size.width,
+    );
+    if (widget.topic.img.startsWith("http")) {
+      heroChild = Image.network(
+        widget.topic.img,
+        width: MediaQuery.of(context).size.width,
+      );
+    }
     return Scaffold(
+      floatingActionButton: isAdmin
+          ? FloatingActionButton(
+              onPressed: () => handleCreateQuiz(context),
+              child: const Icon(Icons.add))
+          : Container(),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
       ),
       body: ListView(children: [
         Hero(
-          tag: topic.img,
-          child: Image.asset('assets/covers/${topic.img}',
-              width: MediaQuery.of(context).size.width),
+          tag: widget.topic.img,
+          child: heroChild,
         ),
         Text(
-          topic.title,
+          widget.topic.title,
           style: const TextStyle(
               height: 2, fontSize: 20, fontWeight: FontWeight.bold),
         ),
-        QuizList(topic: topic)
+        QuizList(topic: widget.topic)
       ]),
     );
   }

@@ -1,6 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+export 'user_roles.dart';
+
 import 'package:json_annotation/json_annotation.dart';
-import 'package:quiz_app/models/user_roles.dart';
+
 part 'models.g.dart';
 
 @JsonSerializable()
@@ -47,14 +48,12 @@ class Quiz {
 class Topic {
   late final String id;
   final String title;
-  final String description;
   final String img;
   final List<Quiz> quizzes;
 
   Topic(
       {this.id = '',
       this.title = '',
-      this.description = '',
       this.img = 'default.png',
       this.quizzes = const []});
 

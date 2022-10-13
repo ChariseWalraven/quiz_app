@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:quiz_app/models/models.dart' as models;
 import 'package:quiz_app/services/firestore.dart';
@@ -27,7 +28,7 @@ class UserProfile extends StatelessWidget {
   }
 }
 
-class UserInfo extends StatelessWidget {
+class UserInfo extends StatefulWidget {
   const UserInfo({
     super.key,
     required this.user,
@@ -36,21 +37,44 @@ class UserInfo extends StatelessWidget {
   final User user;
 
   @override
+  State<UserInfo> createState() => _UserInfoState();
+}
+
+class _UserInfoState extends State<UserInfo> {
+  models.UserRoles? userRoles;
+
+  @override
+  void initState() {
+    super.initState();
+    getUserRoles();
+  }
+
+  void getUserRoles() async {
+    models.UserRoles res = await FirestoreService().getUserRoles();
+
+    setState(() {
+      userRoles = res;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
     return Column(
       children: [
-        UserAvatar(user: user),
-        if (user.displayName != null && user.displayName!.isNotEmpty)
+        UserAvatar(user: widget.user),
+        if (widget.user.displayName != null &&
+            widget.user.displayName!.isNotEmpty)
           Text(
-            user.displayName!,
+            widget.user.displayName!,
             style: textTheme.titleLarge,
           ),
-        if (user.email!.isNotEmpty)
+        if (widget.user.email!.isNotEmpty)
           Text(
-            user.email!,
+            widget.user.email!,
             style: textTheme.titleMedium,
           ),
+        if (kDebugMode && userRoles != null) UserRoles(userRoles: userRoles!),
       ],
     );
   }
@@ -142,6 +166,25 @@ class UserAvatar extends StatelessWidget {
             ),
         ],
       ),
+    );
+  }
+}
+
+class UserRoles extends StatelessWidget {
+  const UserRoles({super.key, required this.userRoles});
+
+  final models.UserRoles userRoles;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text(
+          "User roles:",
+          style: Theme.of(context).textTheme.headlineSmall,
+        ),
+        Text("isAdmin? ${userRoles.isAdmin}"),
+      ],
     );
   }
 }
