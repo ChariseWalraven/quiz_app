@@ -5,7 +5,6 @@ class UserRoles {
   UserRoles({required this.isAdmin});
 
   factory UserRoles.fromJson(json) {
-    print(json["isAdmin"]);
     return UserRoles(
       isAdmin: json["isAdmin"] ?? false,
     );

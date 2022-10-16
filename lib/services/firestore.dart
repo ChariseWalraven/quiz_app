@@ -59,10 +59,6 @@ class FirestoreService {
   }
 
   Future<void> createTopic(Topic topic) async {
-    print("creating new topic ${topic.title}, with id ${topic.id}!");
-
     await _db.collection("topics").doc(topic.id).set(topic.toJson());
-
-    print("Created document!");
   }
 }
