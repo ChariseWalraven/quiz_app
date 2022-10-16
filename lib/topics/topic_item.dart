@@ -23,7 +23,7 @@ class TopicItem extends StatelessWidget {
       );
     }
     return Hero(
-      tag: topic.img,
+      tag: topic.img + topic.id,
       child: Card(
         color: AppConstants.hexToColor(AppConstants.appPrimaryColorGreenLight),
         clipBehavior: Clip.antiAlias,
