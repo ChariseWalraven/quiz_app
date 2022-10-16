@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:quiz_app/widgets/form_widgets.dart';
 
 import '../helpers/app_constants.dart';
 import '../services/firestore.dart';
@@ -44,10 +45,9 @@ class NewTopicForm extends StatelessWidget {
 
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
-  final _firestoreService = FirestoreService();
 
-  void handleSubmit(BuildContext context) {
-    // TODO: send data to firebase after validation
+  void _handleSubmit(BuildContext context) {
+    final firestoreService = FirestoreService();
     if (_formKey.currentState!.validate()) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -61,9 +61,12 @@ class NewTopicForm extends StatelessWidget {
       String imageUrl =
           "http://yesofcorsa.com/wp-content/uploads/2015/10/2000_bunny.jpg";
 
-      models.Topic topic =
-          models.Topic(title: _titleController.text, id: id, img: imageUrl);
-      _firestoreService.createTopic(topic);
+      models.Topic topic = models.Topic(
+        title: _titleController.text,
+        id: id,
+        img: imageUrl,
+      );
+      firestoreService.createTopic(topic);
     }
   }
 
@@ -74,35 +77,10 @@ class NewTopicForm extends StatelessWidget {
       child: Column(
         children: [
           TitleFormField(controller: _titleController),
-          ElevatedButton(
-            onPressed: () => handleSubmit(context),
-            child: const Text("Create"),
+          CreateButton(
+            onSubmit: () => _handleSubmit(context),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class TitleFormField extends StatelessWidget {
-  const TitleFormField({super.key, required this.controller});
-
-  final TextEditingController controller;
-  String? validator(String? value) {
-    if (value == null || value.isEmpty) {
-      return "Please enter a title";
-    }
-    return null;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-      controller: controller,
-      validator: validator,
-      decoration: const InputDecoration(
-        labelText: "Title",
-        border: OutlineInputBorder(),
       ),
     );
   }
