@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:quiz_app/models/models.dart' as models;
 
 import '../login/login.dart';
 import '../services/auth.dart';
