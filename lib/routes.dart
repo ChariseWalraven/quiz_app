@@ -1,4 +1,4 @@
-import 'package:quiz_app/quiz/new_quiz.dart';
+import 'package:quiz_app/quiz/new_quiz_page.dart';
 import 'package:quiz_app/topics/new_topic.dart';
 
 import '/about/about.dart';

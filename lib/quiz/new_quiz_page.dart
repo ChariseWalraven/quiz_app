@@ -47,11 +47,6 @@ class _NewQuizFormState extends State<NewQuizForm> {
   final _titleController = TextEditingController();
   final List _questions = [Question.fromJson(_questionJSON)];
 
-  String? _unimplimentedValidator(String? inputValue) {
-    debugPrint("User entered: $inputValue");
-    return "this validator has not been implemented";
-  }
-
   void _unimplimentedOnPress() {
     throw UnimplementedError("OnPress Unimplimented!");
   }
@@ -63,17 +58,15 @@ class _NewQuizFormState extends State<NewQuizForm> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          TextFormField(
-            decoration: const InputDecoration(
-              labelText: "Quiz Title",
-              border: OutlineInputBorder(),
-            ),
+          TextInput(
+            label: "Quiz Title",
             controller: _titleController,
-            validator: _unimplimentedValidator,
           ),
           Expanded(
             child: Container(
-              decoration: BoxDecoration(border: Border.all(color: Colors.teal)),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.teal),
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -101,13 +94,18 @@ class _NewQuizFormState extends State<NewQuizForm> {
 
     debugPrint(_questions[index].text);
 
+    Widget optionBuilder(context, index) {
+      Option option = question.options[index];
+      return TextInput();
+    }
+
     return Column(
       children: [
         Text(question.text),
         ListView.builder(
           shrinkWrap: true,
           itemCount: question.options.length,
-          itemBuilder: _optionBuilder,
+          itemBuilder: optionBuilder,
         ),
         ElevatedButton(
           onPressed: _unimplimentedOnPress,
@@ -116,10 +114,34 @@ class _NewQuizFormState extends State<NewQuizForm> {
       ],
     );
   }
+}
 
-  Widget _optionBuilder(context, index) {
-    return Text("Hi! I'm option number: ${index + 1}");
+class TextInput extends StatelessWidget {
+  TextInput({
+    super.key,
+    this.controller,
+    this.label,
+  });
+
+  final TextEditingController _defaultController = TextEditingController();
+  final TextEditingController? controller;
+  final String? label;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      decoration: InputDecoration(
+        labelText: label ?? "",
+      ),
+      controller: controller ?? _defaultController,
+      validator: _unimplimentedValidator,
+    );
   }
+}
+
+String? _unimplimentedValidator(String? inputValue) {
+  debugPrint("User entered: $inputValue");
+  return "this validator has not been implemented";
 }
 
 // JSON dummy data
