@@ -1,3 +1,4 @@
+import 'package:quiz_app/quiz/new_question.dart';
 import 'package:quiz_app/quiz/new_quiz_page.dart';
 import 'package:quiz_app/topics/new_topic.dart';
 
@@ -14,5 +15,6 @@ var appRoutes = {
   '/profile': (context) => const ProfileScreen(),
   '/about': (context) => const AboutScreen(),
   '/new_topic': (context) => const NewTopicScreen(),
-  '/new_quiz': (context) => const NewQuizScreen(),
+  '/new_quiz': (context) => NewQuizScreen(),
+  '/new_question': (context) => const NewQuestionScreen(),
 };
