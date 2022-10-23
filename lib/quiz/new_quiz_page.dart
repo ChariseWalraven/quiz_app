@@ -115,10 +115,10 @@ class Questions extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Row(
             children: const [
-              IconButton(
-                onPressed: unimplimentedOnPress,
-                icon: Icon(Icons.edit),
-              ),
+              // IconButton(
+              //   onPressed: unimplimentedOnPress,
+              //   icon: Icon(Icons.edit),
+              // ),
               IconButton(
                 onPressed: unimplimentedOnPress,
                 icon: Icon(Icons.delete),
