@@ -5,6 +5,6 @@ void unimplimentedOnPress() {
 }
 
 String? unimplimentedValidator(String? inputValue) {
-  debugPrint("User entered: $inputValue");
+  debugPrint("Unimplemented validator. User entered: $inputValue");
   return "this validator has not been implemented";
 }
