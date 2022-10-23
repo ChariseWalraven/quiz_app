@@ -56,7 +56,7 @@ class _QuizAppState extends State<QuizApp> {
 
         // Otherwise, show something whilst waiting for initialization to complete
         return const MaterialApp(home: LoadingScreen());
-      },
+      }, 
     );
   }
 }
