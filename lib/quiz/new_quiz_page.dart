@@ -1,70 +1,95 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:quiz_app/helpers/app_constants.dart';
 import 'package:quiz_app/helpers/dummy_data.dart';
 import 'package:quiz_app/helpers/helper_functions.dart';
 import 'package:quiz_app/models/models.dart';
+import 'package:quiz_app/quiz/new_question.dart';
+import 'package:quiz_app/quiz/new_quiz_state.dart';
+import 'package:quiz_app/routes.dart';
 import 'package:quiz_app/widgets/form_widgets.dart';
 
 class NewQuizScreen extends StatelessWidget {
-  const NewQuizScreen({super.key});
+  NewQuizScreen({super.key});
 
-  void handleUserOnPressed(BuildContext context) {
-    debugPrint("Create");
+  final _formKey = GlobalKey<FormState>();
+
+  void handleSubmit(BuildContext context) {
+    debugPrint("Submit pressed.");
+    if (_formKey.currentState!.validate()) {
+      debugPrint("Form valid, need to send data to firebase.");
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // TODO: move scaffold or appbar to widgets?
-      appBar: AppBar(
-        backgroundColor:
-            AppConstants.hexToColor(AppConstants.appPrimaryColorGreen),
-        title: const Text('New Quiz'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.check),
-            onPressed: () => handleUserOnPressed(context),
-          )
-        ],
-      ),
-      floatingActionButton: ElevatedButton.icon(
-        onPressed: unimplimentedOnPress,
-        icon: const Icon(Icons.add, size: 24),
-        label: const Text("QUESTION"),
-      ),
-      body: const SafeArea(
-        child: NewQuizForm(),
+    return ChangeNotifierProvider(
+      create: (_) => NewQuizState(),
+      child: Scaffold(
+        // TODO: move scaffold or appbar to widgets?
+        appBar: AppBar(
+          backgroundColor:
+              AppConstants.hexToColor(AppConstants.appPrimaryColorGreen),
+          title: const Text('New Quiz'),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.check),
+              onPressed: () => handleSubmit(context),
+            )
+          ],
+        ),
+        floatingActionButton: ElevatedButton.icon(
+          onPressed: () {
+            Navigator.pushNamed(context, '/new_question');
+          },
+          icon: const Icon(Icons.add, size: 24),
+          label: const Text("QUESTION"),
+        ),
+        body: SafeArea(
+          child: NewQuizForm(formKey: _formKey),
+        ),
       ),
     );
   }
 }
 
-class NewQuizForm extends StatefulWidget {
-  const NewQuizForm({super.key});
+// Handle getting user input and setting state here
+class NewQuizForm extends StatelessWidget {
+  NewQuizForm({
+    super.key,
+    required this.formKey,
+  });
 
-  @override
-  State<NewQuizForm> createState() => _NewQuizFormState();
-}
-
-class _NewQuizFormState extends State<NewQuizForm> {
   final _titleController = TextEditingController();
-  final List _questions = [Question.fromJson(questionJSON)];
+  final GlobalKey<FormState> formKey;
+
+  void handleEditingComplete(NewQuizState state) {
+    debugPrint("setting title: ${_titleController.text}");
+    // set title
+    state.title = _titleController.text;
+    FocusManager.instance.primaryFocus?.unfocus();
+  }
 
   @override
   Widget build(BuildContext context) {
+    NewQuizState state = Provider.of<NewQuizState>(context);
     return Form(
+      key: formKey,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            QuizTitle(titleController: _titleController),
-            Expanded(
-              child: Questions(
-                questions: _questions,
-              ),
+            OutlinedTextField(
+              label: "Title",
+              hintText: "Enter quiz title",
+              controller: _titleController,
+              onEditingComplete: () => handleEditingComplete(state),
+            ),
+            const Expanded(
+              child: Questions(),
             ),
           ],
         ),
@@ -74,15 +99,12 @@ class _NewQuizFormState extends State<NewQuizForm> {
 }
 
 class Questions extends StatelessWidget {
-  const Questions({
-    super.key,
-    required this.questions,
-  });
-
-  final List questions;
+  const Questions({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final List questions = Provider.of<NewQuizState>(context).questions;
+    // NewQuizState state = Provider.of<NewQuizState>(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -90,26 +112,30 @@ class Questions extends StatelessWidget {
           "Questions",
           style: Theme.of(context).textTheme.bodyLarge,
         ),
-        ListView.builder(
-          shrinkWrap: true,
-          itemCount: questions.length,
-          itemBuilder: _questionBuilder,
-        ),
+        if (questions.isEmpty)
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10),
+            child: Text("No questions yet..."),
+          ),
+        if (questions.isNotEmpty)
+          ListView.builder(
+            shrinkWrap: true,
+            itemCount: questions.length,
+            itemBuilder: _questionBuilder,
+          ),
       ],
     );
   }
 
   Widget _questionBuilder(BuildContext context, int index) {
-    Question question = questions[index];
-
-    debugPrint(questions[index].text);
+    Question? question = Provider.of<NewQuizState>(context).questions[index];
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: Text(question.text),
+          child: Text(question?.text ?? ""),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -127,31 +153,6 @@ class Questions extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-class QuizTitle extends StatelessWidget {
-  const QuizTitle({
-    Key? key,
-    required TextEditingController titleController,
-  })  : _titleController = titleController,
-        super(key: key);
-
-  final TextEditingController _titleController;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10.0),
-      child: TextFormField(
-        decoration: const InputDecoration(
-          labelText: "Title",
-          border: OutlineInputBorder(),
-        ),
-        controller: _titleController,
-        validator: unimplimentedValidator,
-      ),
     );
   }
 }

@@ -76,7 +76,10 @@ class NewTopicForm extends StatelessWidget {
       key: _formKey,
       child: Column(
         children: [
-          TitleFormField(controller: _titleController),
+          OutlinedTextField(
+            label: "Title",
+            controller: _titleController,
+          ),
           CreateButton(
             onSubmit: () => _handleSubmit(context),
           ),
